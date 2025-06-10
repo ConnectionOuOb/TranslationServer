@@ -12,4 +12,6 @@ services:
         reservations:
           devices:
             - capabilities: [ gpu ]
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
     restart: unless-stopped

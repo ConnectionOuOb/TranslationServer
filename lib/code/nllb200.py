@@ -1,4 +1,4 @@
-LANGUAGE_CODES = {
+SUPPORTED_LANGUAGES = {
     "Acehnese (Arabic script)": "ace_Arab",
     "Acehnese (Latin script)": "ace_Latn",
     "Mesopotamian Arabic": "acm_Arab",
