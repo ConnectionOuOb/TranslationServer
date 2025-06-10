@@ -3,18 +3,18 @@
 ## Docker Compose
 
 ### Build
-- ```docker-compose -p traslation_api -f docker/TranlationAPI.yml build```
+- ```docker-compose -p traslation_api -f docker/compose.yml build```
 
 ### Start service
-- ```docker-compose -p traslation_api -f docker/TranlationAPI.yml up -d```
+- ```docker-compose -p traslation_api -f docker/Compose.yml up -d```
 
 ### Stop service
-- ```docker-compose -p traslation_api -f docker/TranlationAPI.yml stop```
+- ```docker-compose -p traslation_api -f docker/Compose.yml stop```
 
 ### Check
-- ```docker-compose -p traslation_api -f docker/TranlationAPI.yml ps```
+- ```docker-compose -p traslation_api -f docker/Compose.yml ps```
 
 ### Log
-- ```docker-compose -p traslation_api -f docker/TranlationAPI.yml logs```
+- ```docker-compose -p traslation_api -f docker/Compose.yml logs```
 
 

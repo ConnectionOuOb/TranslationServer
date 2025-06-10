@@ -22,8 +22,8 @@ def parse_args() -> Settings:
         "-m",
         "--model-name",
         type=str,
-        default="facebook/nllb-200-distilled-600M",
-        help="Model name, default is facebook/nllb-200-distilled-600M",
+        default="facebook/nllb-200-3.3B",
+        help="Model name, default is facebook/nllb-200-3.3B",
     )
 
     args = parser.parse_args()

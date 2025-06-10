@@ -30,8 +30,7 @@ class Settings:
 
 class TranslateRequest(BaseModel):
     text: str
-    source_language: str
-    target_language: str
+    language: str
 
 
 class TranslateResponse(BaseModel):
