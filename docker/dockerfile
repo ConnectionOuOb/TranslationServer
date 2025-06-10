@@ -18,7 +18,7 @@ EXPOSE 8080
 
 ARG model=facebook/nllb-200-3.3B
 
-RUN pip install --no-cache-dir huggingface-cli && \
+RUN pip install --no-cache-dir huggingface_hub[cli] && \
     huggingface-cli download ${model}
 
 CMD ["python", "server.py", "-m", "${model}"]
