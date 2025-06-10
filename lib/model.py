@@ -1,6 +1,7 @@
 import time
 import torch
 import asyncio
+import logging
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
@@ -27,6 +28,8 @@ class ModelManager:
         self.model.to("cuda")
         self.model.eval()
 
+        logging.info(f"Model loaded: {self.model_name}")
+
     def unload_model(self):
         """
         Unload model from memory.
@@ -37,6 +40,8 @@ class ModelManager:
             self.model = None
             self.tokenizer = None
             torch.cuda.empty_cache()
+
+        logging.info(f"Model unloaded: {self.model_name}")
 
     async def translate(self, text: str, target_language: str) -> str:
         """
@@ -53,12 +58,14 @@ class ModelManager:
             self.last_used = time.time()
 
             inputs = self.tokenizer(text, return_tensors="pt").to("cuda")
-            target_lang_id = self.tokenizer.get_lang_id(target_language)
             generated_tokens = self.model.generate(
                 **inputs,
-                forced_bos_token_id=target_lang_id,
-                max_length=512,
+                forced_bos_token_id=self.tokenizer.convert_tokens_to_ids(
+                    target_language
+                ),
+                max_length=self.tokenizer.model_max_length,
             )
+
             return self.tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
 
     async def monitor_idle(self, idle_timeout: int = 60):
