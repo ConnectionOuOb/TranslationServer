@@ -1,11 +1,11 @@
 import asyncio
 import uvicorn
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from lib import log
 from lib.args import parse_args
 from lib.model import ModelManager
-from lib.object import TranslateRequest, TranslateResponse
+from lib.router import translate, language
 
 settings = parse_args()
 
@@ -31,28 +31,8 @@ def main() -> None:
     )
     app.state.model_manager = ModelManager(settings.model_name)
 
-    # Translate endpoint
-    @app.post(
-        "/translate",
-        response_model=TranslateResponse,
-        tags=["translate"],
-    )
-    async def translate(req: TranslateRequest) -> TranslateResponse:
-        """
-        Translate text from source language to target language.
-        Args:
-            req: TranslateRequest
-        Returns:
-            TranslateResponse
-        """
-
-        try:
-            translated = await app.state.model_manager.translate(
-                req.text, req.target_language
-            )
-            return TranslateResponse(translation=translated)
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=str(e))
+    app.include_router(translate.create_router(app.state.model_manager))
+    app.include_router(language.create_router())
 
     uvicorn.run(
         app,

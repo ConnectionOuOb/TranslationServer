@@ -1,4 +1,4 @@
-SUPPORTED_LANGUAGES = {
+NLLB200_LANGUAGES_ENCODED = {
     "Acehnese (Arabic script)": "ace_Arab",
     "Acehnese (Latin script)": "ace_Latn",
     "Mesopotamian Arabic": "acm_Arab",
@@ -202,3 +202,5 @@ SUPPORTED_LANGUAGES = {
     "Standard Malay": "zsm_Latn",
     "Zulu": "zul_Latn",
 }
+
+NLLB200_LANGUAGES_DECODED = {v: k for k, v in NLLB200_LANGUAGES_ENCODED.items()}

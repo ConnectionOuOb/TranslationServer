@@ -3,5 +3,4 @@ pydantic
 torch
 transformers
 uvicorn
-langid
 email-validator
