@@ -6,11 +6,19 @@ class Settings:
     port: int
     timeout: int
     model_name: str
+    llm_config_path: str | None
 
-    def __init__(self, port: int, timeout: int, model_name: str):
+    def __init__(
+        self,
+        port: int,
+        timeout: int,
+        model_name: str,
+        llm_config_path: str | None = None,
+    ):
         self.port = port
         self.timeout = timeout
         self.model_name = model_name
+        self.llm_config_path = llm_config_path
 
     def check(self) -> None:
         self._check_port()
