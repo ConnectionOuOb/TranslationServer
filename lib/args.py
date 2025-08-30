@@ -25,10 +25,17 @@ def parse_args() -> Settings:
         default="facebook/nllb-200-3.3B",
         help="Model name, default is facebook/nllb-200-3.3B",
     )
+    parser.add_argument(
+        "-c",
+        "--llm-config",
+        type=str,
+        default=None,
+        help="Path to YAML config for LLM providers/models (optional)",
+    )
 
     args = parser.parse_args()
 
-    settings = Settings(args.port, args.timeout, args.model_name)
+    settings = Settings(args.port, args.timeout, args.model_name, args.llm_config)
     settings.check()
 
     return settings
