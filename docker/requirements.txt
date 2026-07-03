@@ -4,3 +4,5 @@ torch
 transformers
 uvicorn
 email-validator
+aiohttp
+pyyaml
