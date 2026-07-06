@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 from .base import LLMClient
 from .ollama_client import OllamaClient
+from .openai_client import OpenAIClient
 
 
 def create_llm_client(
@@ -8,7 +9,7 @@ def create_llm_client(
     provider_override: str | None,
     model_override: str | None,
     temperature: float,
-    max_tokens: int,
+    max_tokens: int | None,
 ) -> LLMClient:
     cfg = cfg or {}
     providers = cfg.get("providers") or {}
@@ -20,6 +21,8 @@ def create_llm_client(
         raise ValueError("model not specified")
     if provider == "ollama":
         return OllamaClient(provider, model, temperature, max_tokens, provider_cfg)
+    if provider in ("openai", "vllm"):
+        return OpenAIClient(provider, model, temperature, max_tokens, provider_cfg)
     raise ValueError("unsupported provider")
 
 

@@ -1,2 +1,6 @@
 # Python
 **/__pycache__/
+
+# LLM secrets (copy from llm_secrets.yaml.example)
+docker/llm_secrets.yaml
+**/llm_secrets.yaml

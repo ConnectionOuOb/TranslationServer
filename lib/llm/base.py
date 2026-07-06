@@ -7,7 +7,7 @@ class LLMClient:
         provider: str,
         model: str,
         temperature: float = 0.2,
-        max_tokens: int = 512,
+        max_tokens: int | None = None,
         config: Optional[Dict[str, Any]] = None,
     ) -> None:
         self.provider = provider

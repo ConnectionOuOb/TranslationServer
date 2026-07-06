@@ -1,4 +1,7 @@
-from pydantic import BaseModel
+from typing import Literal
+
+from pydantic import BaseModel, Field
+
 from lib import define
 
 
@@ -37,9 +40,43 @@ class Settings:
 
 
 class TranslateRequest(BaseModel):
-    text: str
-    language: str
+    text: str = Field(..., min_length=1, description="原文", examples=["Hello world"])
+    language: str = Field(
+        ...,
+        min_length=1,
+        description="目標語言代碼（查 /encode 或 /decode）",
+        examples=["zho_Hans"],
+    )
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [{"text": "Hello world", "language": "zho_Hans"}]
+        }
+    }
 
 
 class TranslateResponse(BaseModel):
-    translation: str
+    translation: str = Field(..., description="譯文")
+
+
+class NllbHealth(BaseModel):
+    loaded: bool
+    model_name: str | None = None
+    dtype: str | None = None
+    bits: int | None = None
+    cuda_available: bool
+
+
+class LlmHealth(BaseModel):
+    configured: bool
+    provider: str | None = None
+    base_url: str | None = None
+    default_model: str | None = None
+    reachable: bool | None = None
+
+
+class HealthResponse(BaseModel):
+    status: Literal["ok", "degraded"]
+    api: Literal["alive"]
+    nllb: NllbHealth
+    llm: LlmHealth

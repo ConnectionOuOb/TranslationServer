@@ -1,0 +1,11 @@
+providers:
+  default: openai
+  openai:
+    base_url: http://192.168.28.174:8080/v1
+    default_model: vllm/Qwen/Qwen3.6-35B-A3B-FP8
+    max_input_tokens: 200000
+    chat_template_kwargs:
+      enable_thinking: false
+    models:
+      - vllm/Qwen/Qwen3.6-35B-A3B-FP8
+      - vllm/microsoft/harrier-oss-v1-27b

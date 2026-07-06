@@ -1,4 +1,3 @@
-import time
 import torch
 import asyncio
 import logging
@@ -16,7 +15,7 @@ _GENERATE_KWARGS = {
 
 class ModelManager:
     """
-    Model manager to load and unload model.
+    Model manager: load NLLB at startup and keep it resident in GPU memory.
     Args:
         model_name: str
     """
@@ -26,7 +25,6 @@ class ModelManager:
         self.model = None
         self.tokenizer = None
         self.model_lock = asyncio.Lock()
-        self.last_used = time.time()
 
     async def load_model(self):
         """
@@ -47,22 +45,32 @@ class ModelManager:
             f"Model loaded: {self.model_name} (dtype={param_dtype}, bits={param_dtype.itemsize * 8})"
         )
 
+    def is_loaded(self) -> bool:
+        return self.model is not None and self.tokenizer is not None
+
+    def health_info(self) -> dict:
+        cuda_available = torch.cuda.is_available()
+        if not self.is_loaded():
+            return {
+                "loaded": False,
+                "model_name": self.model_name,
+                "dtype": None,
+                "bits": None,
+                "cuda_available": cuda_available,
+            }
+
+        param_dtype = next(self.model.parameters()).dtype
+        return {
+            "loaded": True,
+            "model_name": self.model_name,
+            "dtype": str(param_dtype),
+            "bits": param_dtype.itemsize * 8,
+            "cuda_available": cuda_available,
+        }
+
     def _max_new_tokens(self, input_length: int) -> int:
         # 依輸入長度估算譯文長度，避免 max_length=1024 造成尾部重複
         return min(max(int(input_length * 2.5) + 16, 32), 512)
-
-    def unload_model(self):
-        """
-        Unload model from memory.
-        """
-        if self.model is not None:
-            del self.model
-            del self.tokenizer
-            self.model = None
-            self.tokenizer = None
-            torch.cuda.empty_cache()
-
-        logging.info(f"Model unloaded: {self.model_name}")
 
     async def translate(self, text: str, target_language: str) -> str:
         """
@@ -74,10 +82,6 @@ class ModelManager:
             str: translated text
         """
         async with self.model_lock:
-            if self.model is None:
-                await self.load_model()
-            self.last_used = time.time()
-
             inputs = self.tokenizer(text, return_tensors="pt").to("cuda")
             input_length = inputs.input_ids.shape[1]
             max_new_tokens = self._max_new_tokens(input_length)
@@ -93,16 +97,3 @@ class ModelManager:
                 )
 
             return self.tokenizer.decode(generated_tokens[0], skip_special_tokens=True)
-
-    async def monitor_idle(self, idle_timeout: int = 60):
-        """
-        Monitor idle time and unload model if idle timeout is reached.
-        Args:
-            idle_timeout: int
-        """
-        while True:
-            await asyncio.sleep(30)
-            if self.model is not None:
-                elapsed = time.time() - self.last_used
-                if elapsed > idle_timeout:
-                    self.unload_model()

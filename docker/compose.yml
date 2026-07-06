@@ -14,4 +14,6 @@ services:
             - capabilities: [ gpu ]
     volumes:
       - ~/.cache/huggingface:/root/.cache/huggingface
+      - ./llm_secrets.yaml:/app/docker/llm_secrets.yaml:ro
+    command: ["python", "server.py", "-c", "docker/llm_config.yaml"]
     restart: unless-stopped
